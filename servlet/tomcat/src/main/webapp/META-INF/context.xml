@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  Tomcat context.xml for JNDI DataSource configuration
+  Challenge: This JNDI resource must be converted to Spring DataSource bean
+  Location: Typically in $CATALINA_BASE/conf/context.xml or META-INF/context.xml
+-->
+<Context>
+    
+    <!-- JNDI DataSource Configuration -->
+    <!-- Challenge: In Spring Boot, this becomes a @Bean or application.properties config -->
+    <Resource 
+        name="jdbc/LegacyDB" 
+        auth="Container"
+        type="javax.sql.DataSource"
+        driverClassName="org.h2.Driver"
+        url="jdbc:h2:mem:legacydb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+        username="sa"
+        password=""
+        maxTotal="20"
+        maxIdle="10"
+        maxWaitMillis="10000"
+        defaultAutoCommit="true"
+        validationQuery="SELECT 1"
+        testOnBorrow="true"/>
+
+    <!-- Additional JNDI Resource - Mail Session -->
+    <Resource 
+        name="mail/Session" 
+        auth="Container"
+        type="javax.mail.Session"
+        mail.smtp.host="smtp.example.com"
+        mail.smtp.port="587"
+        mail.smtp.auth="true"
+        mail.smtp.starttls.enable="true"
+        mail.smtp.user="noreply@example.com"
+        password="secret"/>
+
+    <!-- Environment Entries (equivalent to context-param but container-managed) -->
+    <Environment 
+        name="appName" 
+        value="Legacy Servlet Application"
+        type="java.lang.String" 
+        override="false"/>
+    
+    <Environment 
+        name="maxCacheSize" 
+        value="1000"
+        type="java.lang.Integer" 
+        override="false"/>
+
+</Context>
