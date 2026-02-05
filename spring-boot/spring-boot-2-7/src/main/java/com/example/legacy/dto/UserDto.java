@@ -8,7 +8,6 @@ import javax.validation.constraints.Size;
 
 /**
  * Data Transfer Object for User with javax.validation constraints.
- * BREAKING: javax.validation.* must change to jakarta.validation.* in Spring Boot 3.0
  */
 @Data
 public class UserDto {

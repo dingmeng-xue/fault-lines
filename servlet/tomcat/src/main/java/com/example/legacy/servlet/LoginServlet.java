@@ -11,24 +11,16 @@ import java.io.IOException;
 
 /**
  * LoginServlet demonstrates:
- * - Traditional HttpServlet extension (vs Spring @Controller)
+ * - Traditional HttpServlet extension
  * - Session management using HttpSession
  * - Manual request parameter handling
  * - Hardcoded business logic
  * - Forward to JSP for view rendering
- * 
- * Migration Challenges:
- * 1. Convert to Spring @Controller with @RequestMapping
- * 2. Replace HttpSession with stateless JWT or Spring Session
- * 3. Use @RequestParam for parameter binding
- * 4. Externalize configuration
- * 5. Replace JSP with Thymeleaf or REST endpoints
  */
 public class LoginServlet extends HttpServlet {
     
     private static final Logger logger = Logger.getLogger(LoginServlet.class);
     
-    // Hardcoded configuration - Challenge: Should be in application.properties
     private static final int MAX_LOGIN_ATTEMPTS = 3;
     private static final int SESSION_TIMEOUT = 1800; // 30 minutes
     
@@ -38,7 +30,6 @@ public class LoginServlet extends HttpServlet {
         
         logger.info("GET /login - Displaying login page");
         
-        // Forward to JSP (Challenge: JSP limitations in Spring Boot JAR)
         request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
     }
     
@@ -46,13 +37,11 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        // Manual parameter extraction (Challenge: Spring uses @RequestParam)
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         
         logger.info("POST /login - Login attempt for user: " + username);
         
-        // Session management (Challenge: Moving to stateless architecture)
         HttpSession session = request.getSession(true);
         
         // Track login attempts in session
@@ -61,11 +50,9 @@ public class LoginServlet extends HttpServlet {
             attempts = 0;
         }
         
-        // Hardcoded authentication logic (Challenge: Use Spring Security)
         if (authenticate(username, password)) {
             logger.info("Login successful for user: " + username);
             
-            // Store user info in session (Challenge: Use JWT or Spring Security context)
             session.setAttribute("username", username);
             session.setAttribute("role", getUserRole(username));
             session.setAttribute("loginTime", System.currentTimeMillis());
@@ -97,20 +84,14 @@ public class LoginServlet extends HttpServlet {
         }
     }
     
-    /**
-     * Hardcoded authentication - Challenge: Replace with Spring Security
-     */
     private boolean authenticate(String username, String password) {
         // Extremely simplified authentication
         // In real app, would check against database
-        // TODO: Replace with proper authentication service
         return username != null && password != null && 
-               username.length() > 0 && password.length() >= 8;
+               ("admin".equals(username) && "admin123".equals(password) ||
+                "user".equals(username) && "user123".equals(password));
     }
     
-    /**
-     * Hardcoded role assignment - Challenge: Use Spring Security authorities
-     */
     private String getUserRole(String username) {
         if ("admin".equals(username)) {
             return "admin";

@@ -18,18 +18,11 @@ import java.util.List;
  * - Traditional servlet pattern
  * - Hardcoded data/configuration
  * - Manual JSON handling
- * 
- * Migration Challenges:
- * 1. Convert to Spring @RestController
- * 2. Use Spring Data repositories
- * 3. Automatic JSON conversion with Jackson
- * 4. Pagination support with Spring Data
  */
 public class ProductServlet extends HttpServlet {
     
     private static final Logger logger = Logger.getLogger(ProductServlet.class);
     
-    // Hardcoded product catalog (Challenge: Use database with Spring Data JPA)
     private static List<Product> products = new ArrayList<>();
     
     static {
@@ -64,31 +57,17 @@ public class ProductServlet extends HttpServlet {
     private void listProducts(HttpServletRequest request, HttpServletResponse response) 
             throws IOException {
         
-        // Manual pagination (Challenge: Spring Data provides this automatically)
         String pageParam = request.getParameter("page");
         String sizeParam = request.getParameter("size");
         
-        int page = 0;
-        int size = 10;
+        int page = pageParam != null ? Integer.parseInt(pageParam) : 0;
+        int size = sizeParam != null ? Integer.parseInt(sizeParam) : 10;
         
-        try {
-            if (pageParam != null) {
-                page = Math.max(0, Integer.parseInt(pageParam));
-            }
-            if (sizeParam != null) {
-                size = Math.max(1, Math.min(100, Integer.parseInt(sizeParam)));
-            }
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid pagination parameters");
-            return;
-        }
-        
-        int start = Math.min(page * size, products.size());
+        int start = page * size;
         int end = Math.min(start + size, products.size());
         
         List<Product> pageProducts = products.subList(start, end);
         
-        // Manual JSON building (Challenge: Spring Boot does this automatically)
         JSONObject result = new JSONObject();
         result.put("totalElements", products.size());
         result.put("totalPages", (products.size() + size - 1) / size);
@@ -148,7 +127,6 @@ public class ProductServlet extends HttpServlet {
         return json;
     }
     
-    // Simple Product class (Challenge: Should be JPA entity)
     private static class Product {
         private Long id;
         private String name;

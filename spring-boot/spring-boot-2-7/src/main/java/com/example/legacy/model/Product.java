@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 
 /**
  * Product entity using javax.persistence and javax.validation annotations.
- * BREAKING: These packages are renamed to jakarta.* in Spring Boot 3.0
  */
 @Entity
 @Table(name = "products")

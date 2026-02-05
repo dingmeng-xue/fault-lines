@@ -12,7 +12,6 @@ import java.util.List;
 
 /**
  * REST controller using javax.servlet for HTTP request handling.
- * BREAKING: javax.servlet.* must change to jakarta.servlet.* in Spring Boot 3.0
  */
 @RestController
 @RequestMapping("/api/products")

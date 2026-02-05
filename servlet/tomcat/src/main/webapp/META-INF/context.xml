@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-  Tomcat context.xml for JNDI DataSource configuration
-  Challenge: This JNDI resource must be converted to Spring DataSource bean
-  Location: Typically in $CATALINA_BASE/conf/context.xml or META-INF/context.xml
--->
 <Context>
     
     <!-- JNDI DataSource Configuration -->
-    <!-- Challenge: In Spring Boot, this becomes a @Bean or application.properties config -->
     <Resource 
         name="jdbc/LegacyDB" 
         auth="Container"
@@ -33,7 +27,7 @@
         mail.smtp.auth="true"
         mail.smtp.starttls.enable="true"
         mail.smtp.user="noreply@example.com"
-        password="${MAIL_PASSWORD}"/>
+        password="secret"/>
 
     <!-- Environment Entries (equivalent to context-param but container-managed) -->
     <Environment 

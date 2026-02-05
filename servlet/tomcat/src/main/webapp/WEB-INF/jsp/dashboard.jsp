@@ -48,7 +48,6 @@
                     <li>Session timeout: <%= session.getMaxInactiveInterval() %> seconds</li>
                     <li>Stateful architecture</li>
                 </ul>
-                <p><strong>Migration:</strong> Move to stateless JWT-based authentication or Spring Session</p>
             </div>
         </div>
     </div>

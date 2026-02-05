@@ -14,13 +14,6 @@
             <h1>Legacy Servlet Application</h1>
             <h2>Login</h2>
             
-            <!-- 
-                JSP Challenge: 
-                - JSPs have significant limitations in Spring Boot executable JARs
-                - Must use WAR packaging or migrate to Thymeleaf/FreeMarker
-                - JSP standard tags and JSTL work differently
-            -->
-            
             <c:if test="${not empty error}">
                 <div class="error-message">
                     ${error}
@@ -40,6 +33,7 @@
                 <div class="form-group">
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" required autofocus>
+                    <small>Try: admin/admin123 or user/user123</small>
                 </div>
                 
                 <div class="form-group">
@@ -49,16 +43,6 @@
                 
                 <button type="submit" class="btn-primary">Login</button>
             </form>
-            
-            <div class="info-box">
-                <h3>Migration Challenges Demonstrated:</h3>
-                <ul>
-                    <li><strong>JSP Limitations:</strong> This JSP won't work in Spring Boot executable JAR</li>
-                    <li><strong>Session Management:</strong> Uses HttpSession (should be stateless in modern apps)</li>
-                    <li><strong>Manual Security:</strong> Custom filter-based security (use Spring Security)</li>
-                    <li><strong>Static Assets:</strong> CSS in /css/ needs to move to /static/ in Spring Boot</li>
-                </ul>
-            </div>
         </div>
     </div>
     

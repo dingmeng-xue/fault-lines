@@ -11,11 +11,6 @@ import java.io.IOException;
  * CharacterEncodingFilter demonstrates:
  * - Character encoding configuration via filter
  * - Request/response wrapper usage
- * 
- * Migration Challenges:
- * 1. In Spring Boot, just set server.servlet.encoding.charset=UTF-8 in application.properties
- * 2. Spring Boot auto-configures CharacterEncodingFilter by default
- * 3. No need for manual filter registration
  */
 public class CharacterEncodingFilter implements Filter {
     

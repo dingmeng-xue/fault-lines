@@ -1,7 +1,5 @@
 /* 
    Legacy Servlet Application Styles
-   Challenge: Static assets in /css/ or /WEB-INF/resources/
-   Spring Boot expects: /static/, /public/, /resources/, /META-INF/resources/
 */
 
 * {

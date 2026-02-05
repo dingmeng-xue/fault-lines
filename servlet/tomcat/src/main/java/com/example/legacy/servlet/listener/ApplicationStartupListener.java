@@ -18,14 +18,6 @@ import java.util.Properties;
  * - JNDI environment entry lookup
  * - Log4j configuration
  * - Startup/shutdown hooks
- * 
- * Migration Challenges:
- * 1. Replace with Spring's @PostConstruct or CommandLineRunner
- * 2. Use Spring's ApplicationContextInitializer
- * 3. Use Spring Boot's auto-configuration instead of manual setup
- * 4. Replace Log4j with Spring Boot's default logging (Logback)
- * 5. Use Spring's @PreDestroy for cleanup
- * 6. JNDI lookups become Spring @Value or @ConfigurationProperties
  */
 public class ApplicationStartupListener implements ServletContextListener {
     
@@ -39,10 +31,8 @@ public class ApplicationStartupListener implements ServletContextListener {
         logger.info("Application Starting Up...");
         logger.info("========================================");
         
-        // Configure Log4j (Challenge: Spring Boot uses application.properties for logging)
         configureLogging(context);
         
-        // Read context parameters (Challenge: Use application.properties in Spring Boot)
         String environment = context.getInitParameter("appEnvironment");
         String maxUploadSize = context.getInitParameter("maxUploadSize");
         String apiEndpoint = context.getInitParameter("apiEndpoint");
@@ -51,11 +41,9 @@ public class ApplicationStartupListener implements ServletContextListener {
         logger.info("Max Upload Size: " + maxUploadSize + " bytes");
         logger.info("API Endpoint: " + apiEndpoint);
         
-        // Store in application scope (Challenge: Use Spring @Configuration beans)
         context.setAttribute("startTime", System.currentTimeMillis());
         context.setAttribute("environment", environment);
         
-        // Lookup JNDI environment entries (Challenge: Use Spring @Value)
         try {
             Context initContext = new InitialContext();
             Context envContext = (Context) initContext.lookup("java:comp/env");
@@ -73,8 +61,6 @@ public class ApplicationStartupListener implements ServletContextListener {
             logger.warn("Failed to lookup JNDI resources (may not be available in all environments)", e);
         }
         
-        // Initialize application components
-        // Challenge: In Spring Boot, these would be @Component beans with @PostConstruct
         initializeCache(context);
         initializeScheduledTasks();
         loadApplicationConfig();
@@ -104,7 +90,6 @@ public class ApplicationStartupListener implements ServletContextListener {
                                     hours, minutes, seconds));
         }
         
-        // Cleanup resources (Challenge: Use Spring's @PreDestroy)
         cleanupCache();
         shutdownScheduledTasks();
         closeConnections();
@@ -112,10 +97,6 @@ public class ApplicationStartupListener implements ServletContextListener {
         logger.info("Application shutdown complete");
     }
     
-    /**
-     * Configure Log4j from properties file
-     * Challenge: Spring Boot uses application.properties or logback-spring.xml
-     */
     private void configureLogging(ServletContext context) {
         try {
             InputStream log4jConfig = context.getResourceAsStream("/WEB-INF/log4j.properties");
@@ -130,10 +111,6 @@ public class ApplicationStartupListener implements ServletContextListener {
         }
     }
     
-    /**
-     * Initialize application cache
-     * Challenge: Use Spring Cache abstraction with @EnableCaching
-     */
     private void initializeCache(ServletContext context) {
         Integer maxCacheSize = (Integer) context.getAttribute("maxCacheSize");
         if (maxCacheSize == null) {
@@ -144,28 +121,16 @@ public class ApplicationStartupListener implements ServletContextListener {
         // Cache initialization would go here
     }
     
-    /**
-     * Initialize scheduled tasks
-     * Challenge: Use Spring's @Scheduled annotation
-     */
     private void initializeScheduledTasks() {
         logger.info("Initializing scheduled tasks");
         // Would typically use Timer or ScheduledExecutorService
-        // In Spring Boot: @EnableScheduling + @Scheduled methods
     }
     
-    /**
-     * Load application configuration
-     * Challenge: Use @ConfigurationProperties in Spring Boot
-     */
     private void loadApplicationConfig() {
         logger.info("Loading application configuration");
         // Load config from properties files, database, etc.
     }
     
-    /**
-     * Cleanup methods - Challenge: Use @PreDestroy in Spring Boot
-     */
     private void cleanupCache() {
         logger.info("Cleaning up cache");
     }

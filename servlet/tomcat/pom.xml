@@ -11,7 +11,7 @@
     <packaging>war</packaging>
 
     <name>Legacy Servlet/Tomcat Application</name>
-    <description>Demonstrates migration challenges from traditional Servlet/Tomcat to Spring Boot</description>
+    <description>Traditional Servlet/Tomcat application</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -42,8 +42,7 @@
             <version>1.2</version>
         </dependency>
 
-        <!-- Manual dependency management (not using starters) -->
-        <!-- Challenge: Version conflicts, dependency bloat -->
+        <!-- Manual dependency management -->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>

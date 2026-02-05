@@ -13,17 +13,10 @@ import java.util.Set;
 
 /**
  * SecurityFilter demonstrates:
- * - Traditional Filter-based security (no Spring Security)
+ * - Traditional Filter-based security
  * - Session-based authentication checking
  * - Manual URL pattern matching
  * - Filter init parameters from web.xml
- * 
- * Migration Challenges:
- * 1. Replace with Spring Security configuration
- * 2. Use @EnableWebSecurity and SecurityFilterChain
- * 3. Replace session checks with Spring Security context
- * 4. Use antMatchers() or requestMatchers() for URL patterns
- * 5. Support for modern security features (CSRF, CORS, etc.)
  */
 public class SecurityFilter implements Filter {
     
@@ -33,7 +26,6 @@ public class SecurityFilter implements Filter {
     
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        // Read exclude patterns from web.xml (Challenge: Spring Security config)
         String excludeParam = filterConfig.getInitParameter("excludePatterns");
         
         if (excludeParam != null) {
@@ -66,7 +58,6 @@ public class SecurityFilter implements Filter {
             return;
         }
         
-        // Check authentication (Challenge: Spring Security does this automatically)
         HttpSession session = httpRequest.getSession(false);
         
         if (session == null || session.getAttribute("username") == null) {
@@ -93,7 +84,6 @@ public class SecurityFilter implements Filter {
             }
         }
         
-        // Add security headers (Challenge: Spring Security adds these by default)
         httpResponse.setHeader("X-Content-Type-Options", "nosniff");
         httpResponse.setHeader("X-Frame-Options", "DENY");
         httpResponse.setHeader("X-XSS-Protection", "1; mode=block");
@@ -109,9 +99,6 @@ public class SecurityFilter implements Filter {
         logger.info("SecurityFilter destroyed");
     }
     
-    /**
-     * Manual pattern matching (Challenge: Spring Security's antMatchers is more powerful)
-     */
     private boolean isExcluded(String path) {
         for (String pattern : excludePatterns) {
             if (pattern.endsWith("/*")) {

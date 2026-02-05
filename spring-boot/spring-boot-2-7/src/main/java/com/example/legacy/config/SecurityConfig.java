@@ -11,8 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Security configuration using WebSecurityConfigurerAdapter.
- * BREAKING: WebSecurityConfigurerAdapter is deprecated in Spring Security 5.7
- * and removed in Spring Boot 3.0. Need to use component-based security instead.
  */
 @Configuration
 @EnableWebSecurity
@@ -35,14 +33,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // TODO: Configure proper user authentication from database or external service
         auth.inMemoryAuthentication()
             .withUser("user")
-            .password(passwordEncoder().encode("${USER_PASSWORD:changeme}"))
+            .password(passwordEncoder().encode("password"))
             .roles("USER")
             .and()
             .withUser("admin")
-            .password(passwordEncoder().encode("${ADMIN_PASSWORD:changeme}"))
+            .password(passwordEncoder().encode("admin"))
             .roles("USER", "ADMIN");
     }
 

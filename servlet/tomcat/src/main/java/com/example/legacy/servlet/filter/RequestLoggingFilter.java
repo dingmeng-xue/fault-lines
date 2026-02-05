@@ -12,12 +12,6 @@ import java.io.IOException;
  * - Traditional servlet filter for cross-cutting concerns
  * - Manual request/response logging
  * - Performance timing
- * 
- * Migration Challenges:
- * 1. Replace with Spring's CommonsRequestLoggingFilter or custom @Component filter
- * 2. Use Spring AOP for aspect-oriented logging
- * 3. Use Spring Boot Actuator for request metrics
- * 4. Integrate with Spring Boot's logging framework
  */
 public class RequestLoggingFilter implements Filter {
     
@@ -62,7 +56,6 @@ public class RequestLoggingFilter implements Filter {
             logger.info(String.format("Completed: %s %s - Status: %d - Duration: %dms", 
                                     method, fullURL, status, duration));
             
-            // Warn on slow requests (Challenge: Spring Boot Actuator provides better metrics)
             if (duration > 1000) {
                 logger.warn(String.format("Slow request detected: %s %s took %dms", 
                                         method, fullURL, duration));

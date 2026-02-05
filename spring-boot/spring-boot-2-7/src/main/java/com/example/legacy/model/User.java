@@ -11,9 +11,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 /**
- * User entity using javax.persistence annotations.
- * BREAKING: javax.persistence.* must change to jakarta.persistence.* in Spring Boot 3.0
- * BREAKING: javax.validation.* must change to jakarta.validation.* in Spring Boot 3.0
+ * User entity using javax.persistence and javax.validation annotations.
  */
 @Entity
 @Table(name = "users")

@@ -23,19 +23,11 @@ import java.sql.SQLException;
  * - Direct JDBC usage (no ORM)
  * - Manual resource management
  * - CSV export functionality
- * 
- * Migration Challenges:
- * 1. Replace JNDI lookup with Spring DataSource bean injection
- * 2. Use Spring Data JPA instead of direct JDBC
- * 3. Use @Autowired for dependency injection
- * 4. Proper exception handling with @ExceptionHandler
- * 5. Use try-with-resources more consistently
  */
 public class DataExportServlet extends HttpServlet {
     
     private static final Logger logger = Logger.getLogger(DataExportServlet.class);
     
-    // JNDI name from web.xml and context.xml (Challenge: Replace with Spring config)
     private static final String JNDI_NAME = "java:comp/env/jdbc/LegacyDB";
     
     @Override
@@ -67,7 +59,6 @@ public class DataExportServlet extends HttpServlet {
     
     /**
      * Demonstrates JNDI DataSource lookup
-     * Challenge: In Spring Boot, just @Autowired DataSource dataSource
      */
     private DataSource getDataSource() throws NamingException {
         Context initContext = new InitialContext();
@@ -79,7 +70,6 @@ public class DataExportServlet extends HttpServlet {
         
         DataSource ds = getDataSource();
         
-        // Manual connection management (Challenge: Spring manages this)
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -117,7 +107,6 @@ public class DataExportServlet extends HttpServlet {
             logger.info("CSV export completed successfully");
             
         } finally {
-            // Manual resource cleanup (Challenge: Spring and try-with-resources handle this)
             if (rs != null) {
                 try { rs.close(); } catch (SQLException e) { 
                     logger.error("Error closing ResultSet", e); 
@@ -141,12 +130,11 @@ public class DataExportServlet extends HttpServlet {
         
         DataSource ds = getDataSource();
         
-        try (Connection conn = ds.getConnection()) {
+        try (Connection conn = ds.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM USERS ORDER BY ID");
+             ResultSet rs = stmt.executeQuery()) {
             
             initializeSampleData(conn);
-            
-            try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM USERS ORDER BY ID");
-                 ResultSet rs = stmt.executeQuery()) {
             
             response.setContentType("text/plain");
             response.setHeader("Content-Disposition", "attachment; filename=\"users.sql\"");
@@ -156,25 +144,23 @@ public class DataExportServlet extends HttpServlet {
             writer.println("-- Generated: " + new java.util.Date());
             writer.println();
             
-                while (rs.next()) {
-                    writer.printf("INSERT INTO USERS (ID, USERNAME, EMAIL, CREATED_DATE) VALUES (%d, '%s', '%s', '%s');%n",
-                        rs.getLong("ID"),
-                        rs.getString("USERNAME"),
-                        rs.getString("EMAIL"),
-                        rs.getTimestamp("CREATED_DATE")
-                    );
-                }
-                
-                writer.flush();
-                
-                logger.info("SQL export completed successfully");
+            while (rs.next()) {
+                writer.printf("INSERT INTO USERS (ID, USERNAME, EMAIL, CREATED_DATE) VALUES (%d, '%s', '%s', '%s');%n",
+                    rs.getLong("ID"),
+                    rs.getString("USERNAME"),
+                    rs.getString("EMAIL"),
+                    rs.getTimestamp("CREATED_DATE")
+                );
             }
+            
+            writer.flush();
+            
+            logger.info("SQL export completed successfully");
         }
     }
     
     /**
      * Initialize sample data in H2 database
-     * Challenge: In Spring Boot, use schema.sql and data.sql or Flyway/Liquibase
      */
     private void initializeSampleData(Connection conn) throws SQLException {
         try (PreparedStatement stmt = conn.prepareStatement(

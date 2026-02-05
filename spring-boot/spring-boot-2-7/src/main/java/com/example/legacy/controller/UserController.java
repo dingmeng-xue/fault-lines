@@ -12,7 +12,6 @@ import java.util.List;
 
 /**
  * REST controller using javax.validation for request validation.
- * BREAKING: javax.validation.* must change to jakarta.validation.* in Spring Boot 3.0
  */
 @RestController
 @RequestMapping("/api/users")

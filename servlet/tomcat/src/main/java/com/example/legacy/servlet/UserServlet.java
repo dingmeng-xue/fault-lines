@@ -20,22 +20,14 @@ import java.util.Map;
  * UserServlet demonstrates:
  * - Manual routing based on pathInfo
  * - Session-based authorization checks
- * - Manual JSON serialization (old org.json library)
+ * - Manual JSON serialization
  * - In-memory data storage
  * - Manual response building
- * 
- * Migration Challenges:
- * 1. Convert to Spring @RestController
- * 2. Use @GetMapping, @PostMapping, @PutMapping, @DeleteMapping
- * 3. Replace session checks with Spring Security @PreAuthorize
- * 4. Use Jackson for automatic JSON conversion
- * 5. Use Spring Data JPA instead of in-memory maps
  */
 public class UserServlet extends HttpServlet {
     
     private static final Logger logger = Logger.getLogger(UserServlet.class);
     
-    // In-memory user storage (Challenge: Replace with Spring Data JPA)
     private static Map<String, User> users = new HashMap<>();
     
     static {
@@ -49,15 +41,13 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        // Session-based authorization (Challenge: Use Spring Security)
         if (!isAuthenticated(request)) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Please login first");
             return;
         }
         
-        String pathInfo = request.getPathInfo(); // /dashboard, /list, /profile/{username}
+        String pathInfo = request.getPathInfo();
         
-        // Manual routing (Challenge: Spring MVC handles this automatically)
         if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/dashboard")) {
             showDashboard(request, response);
         } else if (pathInfo.equals("/list")) {
@@ -95,7 +85,6 @@ public class UserServlet extends HttpServlet {
         
         logger.info("Created new user: " + username);
         
-        // Return JSON response (Challenge: Spring does this automatically)
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         
@@ -156,7 +145,6 @@ public class UserServlet extends HttpServlet {
     private void listUsers(HttpServletRequest request, HttpServletResponse response) 
             throws IOException {
         
-        // Manual JSON array building (Challenge: Jackson does this automatically)
         JSONArray jsonArray = new JSONArray();
         for (User user : users.values()) {
             jsonArray.put(userToJson(user));
@@ -202,7 +190,6 @@ public class UserServlet extends HttpServlet {
         return json;
     }
     
-    // Simple User class (Challenge: Should be JPA entity with repository)
     private static class User {
         private String username;
         private String fullName;
