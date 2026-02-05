@@ -31,8 +31,10 @@ public class ApplicationStartupListener implements ServletContextListener {
         logger.info("Application Starting Up...");
         logger.info("========================================");
         
+        // Configure Log4j
         configureLogging(context);
         
+        // Read context parameters
         String environment = context.getInitParameter("appEnvironment");
         String maxUploadSize = context.getInitParameter("maxUploadSize");
         String apiEndpoint = context.getInitParameter("apiEndpoint");
@@ -41,9 +43,11 @@ public class ApplicationStartupListener implements ServletContextListener {
         logger.info("Max Upload Size: " + maxUploadSize + " bytes");
         logger.info("API Endpoint: " + apiEndpoint);
         
+        // Store in application scope
         context.setAttribute("startTime", System.currentTimeMillis());
         context.setAttribute("environment", environment);
         
+        // Lookup JNDI environment entries
         try {
             Context initContext = new InitialContext();
             Context envContext = (Context) initContext.lookup("java:comp/env");
@@ -61,6 +65,7 @@ public class ApplicationStartupListener implements ServletContextListener {
             logger.warn("Failed to lookup JNDI resources (may not be available in all environments)", e);
         }
         
+        // Initialize application components
         initializeCache(context);
         initializeScheduledTasks();
         loadApplicationConfig();
@@ -90,6 +95,7 @@ public class ApplicationStartupListener implements ServletContextListener {
                                     hours, minutes, seconds));
         }
         
+        // Cleanup resources
         cleanupCache();
         shutdownScheduledTasks();
         closeConnections();
@@ -97,6 +103,9 @@ public class ApplicationStartupListener implements ServletContextListener {
         logger.info("Application shutdown complete");
     }
     
+    /**
+     * Configure Log4j from properties file
+     */
     private void configureLogging(ServletContext context) {
         try {
             InputStream log4jConfig = context.getResourceAsStream("/WEB-INF/log4j.properties");
@@ -111,6 +120,9 @@ public class ApplicationStartupListener implements ServletContextListener {
         }
     }
     
+    /**
+     * Initialize application cache
+     */
     private void initializeCache(ServletContext context) {
         Integer maxCacheSize = (Integer) context.getAttribute("maxCacheSize");
         if (maxCacheSize == null) {
@@ -121,16 +133,25 @@ public class ApplicationStartupListener implements ServletContextListener {
         // Cache initialization would go here
     }
     
+    /**
+     * Initialize scheduled tasks
+     */
     private void initializeScheduledTasks() {
         logger.info("Initializing scheduled tasks");
         // Would typically use Timer or ScheduledExecutorService
     }
     
+    /**
+     * Load application configuration
+     */
     private void loadApplicationConfig() {
         logger.info("Loading application configuration");
         // Load config from properties files, database, etc.
     }
     
+    /**
+     * Cleanup methods
+     */
     private void cleanupCache() {
         logger.info("Cleaning up cache");
     }
