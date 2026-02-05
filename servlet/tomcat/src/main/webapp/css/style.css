@@ -1,0 +1,209 @@
+/* 
+   Legacy Servlet Application Styles
+*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.login-box, .dashboard-content, .error-page {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.login-box {
+    max-width: 450px;
+    margin: 50px auto;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+h2 {
+    color: #667eea;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.error-message {
+    background-color: #fee;
+    border: 1px solid #fcc;
+    color: #c33;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group small {
+    display: block;
+    margin-top: 5px;
+    color: #888;
+    font-size: 12px;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background-color: #667eea;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #5568d3;
+}
+
+.btn-logout {
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.info-box {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #667eea;
+}
+
+.info-box h3 {
+    color: #667eea;
+    margin-bottom: 10px;
+}
+
+.info-box ul {
+    margin-left: 20px;
+    line-height: 1.8;
+}
+
+.info-box li {
+    margin-bottom: 8px;
+}
+
+header {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-info {
+    color: #555;
+}
+
+.stats-box, .menu-box, .challenge-box {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.menu-box ul {
+    list-style: none;
+}
+
+.menu-box li {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.menu-box li:last-child {
+    border-bottom: none;
+}
+
+.menu-box a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.menu-box a:hover {
+    color: #5568d3;
+}
+
+.error-page {
+    text-align: center;
+    padding: 60px 30px;
+}
+
+.error-page h1 {
+    font-size: 72px;
+    color: #dc3545;
+    margin-bottom: 20px;
+}
+
+.error-details {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 4px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.challenge-box {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+}
+
+.challenge-box h2 {
+    color: #856404;
+}
