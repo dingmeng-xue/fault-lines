@@ -68,10 +68,22 @@ public class ProductServlet extends HttpServlet {
         String pageParam = request.getParameter("page");
         String sizeParam = request.getParameter("size");
         
-        int page = pageParam != null ? Integer.parseInt(pageParam) : 0;
-        int size = sizeParam != null ? Integer.parseInt(sizeParam) : 10;
+        int page = 0;
+        int size = 10;
         
-        int start = page * size;
+        try {
+            if (pageParam != null) {
+                page = Math.max(0, Integer.parseInt(pageParam));
+            }
+            if (sizeParam != null) {
+                size = Math.max(1, Math.min(100, Integer.parseInt(sizeParam)));
+            }
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid pagination parameters");
+            return;
+        }
+        
+        int start = Math.min(page * size, products.size());
         int end = Math.min(start + size, products.size());
         
         List<Product> pageProducts = products.subList(start, end);

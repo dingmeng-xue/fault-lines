@@ -33,7 +33,7 @@
         mail.smtp.auth="true"
         mail.smtp.starttls.enable="true"
         mail.smtp.user="noreply@example.com"
-        password="secret"/>
+        password="${MAIL_PASSWORD}"/>
 
     <!-- Environment Entries (equivalent to context-param but container-managed) -->
     <Environment 

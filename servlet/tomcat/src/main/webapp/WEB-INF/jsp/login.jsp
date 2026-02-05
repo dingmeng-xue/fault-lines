@@ -40,7 +40,6 @@
                 <div class="form-group">
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" required autofocus>
-                    <small>Try: admin/admin123 or user/user123</small>
                 </div>
                 
                 <div class="form-group">

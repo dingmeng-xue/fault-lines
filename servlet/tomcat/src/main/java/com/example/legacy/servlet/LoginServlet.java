@@ -103,9 +103,9 @@ public class LoginServlet extends HttpServlet {
     private boolean authenticate(String username, String password) {
         // Extremely simplified authentication
         // In real app, would check against database
+        // TODO: Replace with proper authentication service
         return username != null && password != null && 
-               ("admin".equals(username) && "admin123".equals(password) ||
-                "user".equals(username) && "user123".equals(password));
+               username.length() > 0 && password.length() >= 8;
     }
     
     /**

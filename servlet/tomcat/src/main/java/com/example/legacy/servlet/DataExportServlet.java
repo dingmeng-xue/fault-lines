@@ -141,11 +141,12 @@ public class DataExportServlet extends HttpServlet {
         
         DataSource ds = getDataSource();
         
-        try (Connection conn = ds.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM USERS ORDER BY ID");
-             ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = ds.getConnection()) {
             
             initializeSampleData(conn);
+            
+            try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM USERS ORDER BY ID");
+                 ResultSet rs = stmt.executeQuery()) {
             
             response.setContentType("text/plain");
             response.setHeader("Content-Disposition", "attachment; filename=\"users.sql\"");
@@ -155,18 +156,19 @@ public class DataExportServlet extends HttpServlet {
             writer.println("-- Generated: " + new java.util.Date());
             writer.println();
             
-            while (rs.next()) {
-                writer.printf("INSERT INTO USERS (ID, USERNAME, EMAIL, CREATED_DATE) VALUES (%d, '%s', '%s', '%s');%n",
-                    rs.getLong("ID"),
-                    rs.getString("USERNAME"),
-                    rs.getString("EMAIL"),
-                    rs.getTimestamp("CREATED_DATE")
-                );
+                while (rs.next()) {
+                    writer.printf("INSERT INTO USERS (ID, USERNAME, EMAIL, CREATED_DATE) VALUES (%d, '%s', '%s', '%s');%n",
+                        rs.getLong("ID"),
+                        rs.getString("USERNAME"),
+                        rs.getString("EMAIL"),
+                        rs.getTimestamp("CREATED_DATE")
+                    );
+                }
+                
+                writer.flush();
+                
+                logger.info("SQL export completed successfully");
             }
-            
-            writer.flush();
-            
-            logger.info("SQL export completed successfully");
         }
     }
     

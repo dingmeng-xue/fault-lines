@@ -35,13 +35,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // TODO: Configure proper user authentication from database or external service
         auth.inMemoryAuthentication()
             .withUser("user")
-            .password(passwordEncoder().encode("password"))
+            .password(passwordEncoder().encode("${USER_PASSWORD:changeme}"))
             .roles("USER")
             .and()
             .withUser("admin")
-            .password(passwordEncoder().encode("admin"))
+            .password(passwordEncoder().encode("${ADMIN_PASSWORD:changeme}"))
             .roles("USER", "ADMIN");
     }
 
