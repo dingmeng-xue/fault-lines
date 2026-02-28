@@ -1,0 +1,152 @@
+# Redis Sample Application
+
+A C# RESTful API application demonstrating Redis caching patterns, performance characteristics, and breaking changes across Redis client library versions.
+
+## 🏛️ Classification
+
+**Type: B - Documented (Manual Test Guide)**
+
+This project builds and runs with documented manual testing instructions, including API endpoints and verification steps.
+
+## 📋 Overview
+
+This sample application is a C# REST API that demonstrates Redis caching behavior with performance metrics. The application provides:
+
+### API Endpoints
+
+#### `GET /v1/items/{item-key}`
+Returns item information with caching metrics:
+- **Request**: GUID-formatted item key
+- **Response** (JSON):
+  - `key`: The requested item key (GUID format)
+  - `value`: Item value (key + " value")
+  - `cacheHit`: Boolean indicating if data was retrieved from cache
+  - `timeMs`: Time in milliseconds to retrieve the data
+  
+**Behavior**:
+- **Cache Hit**: Returns cached item immediately
+- **Cache Miss**: Generates item in-memory with 1-second latency (simulating database/external API call)
+- **Cache Not Configured**: Returns null for value
+- **Item Format**: Key=GUID, Value="{GUID} value"
+
+#### `GET /v1/items`
+Returns the latest 100 items accessed through the `/v1/items/{item-key}` endpoint.
+
+**Purpose**: Tracks recently accessed items to demonstrate:
+- Cache access patterns
+- Hit/miss ratios over time
+- Performance impact of caching
+
+## 🚀 Usage
+
+### Prerequisites
+- .NET 10 SDK
+- Redis server (local or remote) - optional for testing without cache
+
+### Configuration
+
+Update `appsettings.json` with your Redis connection string:
+
+```json
+{
+  "Redis": {
+    "ConnectionString": "localhost:6379",
+    "CacheTTLMinutes": 5
+  }
+}
+```
+
+**Configuration Options**:
+- `ConnectionString`: Redis server connection string (leave empty to disable caching)
+- `CacheTTLMinutes`: Cache expiration time in minutes (default: 5)
+
+**Storage**: The latest 100 items list is stored in Redis as a sorted set, ensuring persistence across application restarts.
+
+### Running the Application
+
+```bash
+cd redis/sample-app
+dotnet restore
+dotnet run
+```
+
+The application will start on `http://localhost:5000` with Swagger UI available at the root URL.
+
+### Testing the APIs
+
+**Using Swagger UI**: Navigate to `http://localhost:5000` in your browser for interactive API testing.
+
+**Using cURL**:
+
+#### Test Single Item Retrieval
+
+```bash
+# First call (cache miss - 1 second delay)
+curl http://localhost:5000/v1/items/550e8400-e29b-41d4-a716-446655440000
+
+# Response:
+# {
+#   "key": "550e8400-e29b-41d4-a716-446655440000",
+#   "value": "550e8400-e29b-41d4-a716-446655440000 value",
+#   "cacheHit": false,
+#   "timeMs": 1005
+# }
+
+# Second call (cache hit - fast)
+curl http://localhost:5000/v1/items/550e8400-e29b-41d4-a716-446655440000
+
+# Response:
+# {
+#   "key": "550e8400-e29b-41d4-a716-446655440000",
+#   "value": "550e8400-e29b-41d4-a716-446655440000 value",
+#   "cacheHit": true,
+#   "timeMs": 5
+# }
+```
+
+#### Test Recent Items List
+
+```bash
+# Get the last 100 accessed items (newest first)
+curl http://localhost:5000/v1/items
+
+# Response: Array of recent item keys
+# [
+#   "550e8400-e29b-41d4-a716-446655440000",
+#   "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+#   ...
+# ]
+```
+
+### Testing Without Redis
+
+To test the application without Redis (cache disabled):
+
+1. Set empty connection string in `appsettings.json`:
+   ```json
+   "Redis": {
+     "ConnectionString": "",
+     "CacheTTLMinutes": 5
+   }
+   ```
+
+2. Run the application - all requests will return `cacheHit: false` and `value: null`
+
+3. Recent items list (`GET /v1/items`) will return an empty array
+
+### Test Runtime
+```ps
+# Generate 100 new items
+1..100 | ForEach-Object { $guid=New-Guid; curl "http://localhost:5000/v1/items/$guid"; Write-Host}
+
+# Retrieve the latest 100 items
+curl "http://localhost:5000/v1/items" | ConvertFrom-Json | ForEach-Object {curl "http://localhost:5000/v1/items/$_"; Write-Host}
+```
+
+## 📚 Additional Resources
+
+- [Redis Documentation](https://redis.io/docs/)
+- [Redis Cluster Specification](https://redis.io/docs/reference/cluster-spec/)
+- [Jedis GitHub](https://github.com/redis/jedis)
+- [Lettuce Reference Guide](https://lettuce.io/core/release/reference/)
+- [StackExchange.Redis Documentation](https://stackexchange.github.io/StackExchange.Redis/)
