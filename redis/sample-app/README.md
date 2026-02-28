@@ -37,53 +37,10 @@ Returns the latest 100 items accessed through the `/v1/items/{item-key}` endpoin
 - Hit/miss ratios over time
 - Performance impact of caching
 
-## 🎯 Purpose
-
-The examples in this directory help identify and understand:
-- **API Breaking Changes**: Method signature changes, deprecated APIs
-- **Connection Model Changes**: Connection pooling vs connection multiplexing
-- **Command Compatibility**: Commands that behave differently across Redis versions
-- **Cluster Mode Differences**: Single-node vs cluster topology requirements
-- **Data Structure Changes**: Serialization format incompatibilities
-
-## 🔧 Common Breaking Changes Demonstrated
-
-### Redis Client Library Migrations
-- **Jedis 3.x → 4.x**: Connection pooling changes, command API updates
-- **Lettuce 5.x → 6.x**: Reactive API changes, connection lifecycle
-- **StackExchange.Redis v1 → v2**: Async pattern changes, configuration API
-
-### Redis Server Version Upgrades
-- **Redis 4.x → 5.x**: Streams introduction, active defragmentation
-- **Redis 5.x → 6.x**: ACL implementation, SSL/TLS changes
-- **Redis 6.x → 7.x**: Functions, command changes
-
-### Architecture Changes
-- **Standalone → Cluster**: Hash tags, multi-key operations restrictions
-- **Cluster → Sentinel**: Failover configuration differences
-- **On-premises → Cloud (Azure Cache, AWS ElastiCache)**: Connection string formats, SSL requirements
-
-## 📁 Structure
-
-```
-redis/sample-app/
-├── README.md                    # This file
-├── RedisSampleApp.csproj        # C# project file
-├── Program.cs                   # Application entry point
-├── Controllers/                 # API controllers
-│   └── ItemsController.cs       # Items API endpoint
-├── Services/                    # Business logic
-│   ├── ICacheService.cs         # Cache service interface
-│   └── RedisCacheService.cs     # Redis cache implementation
-├── Models/                      # Data models
-│   └── ItemResponse.cs          # API response model
-└── appsettings.json            # Configuration (Redis connection string)
-```
-
 ## 🚀 Usage
 
 ### Prerequisites
-- .NET 8 SDK
+- .NET 10 SDK
 - Redis server (local or remote) - optional for testing without cache
 
 ### Configuration
@@ -177,43 +134,14 @@ To test the application without Redis (cache disabled):
 
 3. Recent items list (`GET /v1/items`) will return an empty array
 
-## 🔍 Example Scenarios
+### Test Runtime
+```ps
+# Generate 100 new items
+1..100 | ForEach-Object { $guid=New-Guid; curl "http://localhost:5000/v1/items/$guid"; Write-Host}
 
-This application demonstrates several Redis caching patterns and breaking changes:
-
-### Cache Performance Comparison
-- **With Cache**: ~5ms response time (cache hit)
-- **Without Cache**: ~1000ms response time (simulated data source latency)
-- **Speedup**: 200x performance improvement
-
-### Breaking Changes Demonstrated
-
-#### StackExchange.Redis v1 → v2 Migration
-- Connection multiplexing pattern changes
-- Async/await API improvements
-- Configuration API updates
-
-#### Redis Server Version Compatibility
-- Connection string format differences
-- SSL/TLS configuration changes
-- Command compatibility across Redis versions
-
-## ⚠️ Known Issues & Breaking Changes
-
-### Connection Management
-- Pool configuration parameter changes between versions
-- Connection timeout handling differences
-- SSL/TLS certificate validation changes
-
-### Command Behavior
-- `SCAN` cursor behavior in cluster mode
-- Transaction (`MULTI/EXEC`) limitations in cluster
-- Lua script execution in cluster requiring key pre-declaration
-
-### Serialization
-- Binary vs string serialization defaults
-- JSON encoding differences between client versions
-- Character encoding handling changes
+# Retrieve the latest 100 items
+curl "http://localhost:5000/v1/items" | ConvertFrom-Json | ForEach-Object {curl "http://localhost:5000/v1/items/$_"; Write-Host}
+```
 
 ## 📚 Additional Resources
 
@@ -222,15 +150,3 @@ This application demonstrates several Redis caching patterns and breaking change
 - [Jedis GitHub](https://github.com/redis/jedis)
 - [Lettuce Reference Guide](https://lettuce.io/core/release/reference/)
 - [StackExchange.Redis Documentation](https://stackexchange.github.io/StackExchange.Redis/)
-
-## 🤝 Contributing
-
-To add new breaking change examples:
-1. Create a new directory for your language/client
-2. Include minimal reproducible code showing the breaking change
-3. Document the "before" and "after" states clearly
-4. Add comments explaining the migration path
-
-## 📄 License
-
-See the main [LICENSE](../../LICENSE) file in the repository root.

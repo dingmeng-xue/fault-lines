@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container
 builder.Services.Configure<RedisSettings>(builder.Configuration.GetSection("Redis"));
 builder.Services.AddSingleton<ICacheService, RedisCacheService>();
+builder.Services.AddSingleton<IRecentItemsTracker, RecentItemsTracker>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

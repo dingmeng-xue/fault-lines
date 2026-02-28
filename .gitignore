@@ -39,3 +39,13 @@ build/
 .mvn/
 mvnw
 mvnw.cmd
+
+### .NET / C# ###
+bin/
+obj/
+publish/
+.azure/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates

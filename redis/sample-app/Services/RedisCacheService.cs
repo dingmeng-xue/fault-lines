@@ -10,8 +10,6 @@ public class RedisCacheService : ICacheService
     private readonly IDatabase? _db;
     private readonly TimeSpan _cacheTTL;
     private readonly ILogger<RedisCacheService> _logger;
-    private const string RecentItemsKey = "recent_items";
-    private const int MaxRecentItems = 100;
 
     public RedisCacheService(IOptions<RedisSettings> settings, ILogger<RedisCacheService> logger)
     {
@@ -69,49 +67,6 @@ public class RedisCacheService : ICacheService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error setting key {Key} in cache", key);
-        }
-    }
-
-    public async Task AddToRecentItemsAsync(string key)
-    {
-        if (_db == null)
-            return;
-
-        try
-        {
-            // Use sorted set with timestamp as score to maintain order
-            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            await _db.SortedSetAddAsync(RecentItemsKey, key, timestamp);
-            
-            // Keep only the latest 100 items
-            var count = await _db.SortedSetLengthAsync(RecentItemsKey);
-            if (count > MaxRecentItems)
-            {
-                // Remove oldest items
-                await _db.SortedSetRemoveRangeByRankAsync(RecentItemsKey, 0, count - MaxRecentItems - 1);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error adding key {Key} to recent items", key);
-        }
-    }
-
-    public async Task<List<string>> GetRecentItemsAsync()
-    {
-        if (_db == null)
-            return new List<string>();
-
-        try
-        {
-            // Get latest items in descending order (newest first)
-            var items = await _db.SortedSetRangeByRankAsync(RecentItemsKey, 0, -1, Order.Descending);
-            return items.Select(item => item.ToString()).ToList();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting recent items from cache");
-            return new List<string>();
         }
     }
 }

@@ -10,11 +10,16 @@ namespace RedisSampleApp.Controllers;
 public class ItemsController : ControllerBase
 {
     private readonly ICacheService _cacheService;
+    private readonly IRecentItemsTracker _recentItemsTracker;
     private readonly ILogger<ItemsController> _logger;
 
-    public ItemsController(ICacheService cacheService, ILogger<ItemsController> logger)
+    public ItemsController(
+        ICacheService cacheService,
+        IRecentItemsTracker recentItemsTracker,
+        ILogger<ItemsController> logger)
     {
         _cacheService = cacheService;
+        _recentItemsTracker = recentItemsTracker;
         _logger = logger;
     }
 
@@ -60,8 +65,8 @@ public class ItemsController : ControllerBase
             await _cacheService.SetAsync(itemKey, value);
         }
 
-        // Track this item in recent items list
-        await _cacheService.AddToRecentItemsAsync(itemKey);
+        // Track this item in recent items (in-memory FIFO queue)
+        _recentItemsTracker.AddItem(itemKey);
 
         stopwatch.Stop();
 
@@ -82,9 +87,9 @@ public class ItemsController : ControllerBase
     /// <returns>List of recently accessed item keys</returns>
     [HttpGet]
     [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<string>>> GetRecentItems()
+    public ActionResult<List<string>> GetRecentItems()
     {
-        var items = await _cacheService.GetRecentItemsAsync();
+        var items = _recentItemsTracker.GetRecentItems();
         _logger.LogInformation("Retrieved {Count} recent items", items.Count);
         return Ok(items);
     }
