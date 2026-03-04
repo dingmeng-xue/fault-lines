@@ -1,6 +1,7 @@
 import logging
 import cgi
 import io
+import os
 from distutils.version import LooseVersion
 import azure.functions as func
 
@@ -26,6 +27,9 @@ def check_response(req: func.HttpRequest) -> func.HttpResponse:
         hobbies_str = ", ".join(hobbies) if hobbies else "None selected"
         version = form.getvalue('version', '0.0.0').strip()
         
+        app_name = os.environ.get('WEBSITE_SITE_NAME', 'Local Environment')
+        region = os.environ.get('REGION_NAME', 'N/A')
+
         # Verify version using distutils.version
         try:
             current_version = LooseVersion(version)
@@ -58,6 +62,9 @@ def check_response(req: func.HttpRequest) -> func.HttpResponse:
             <p><strong>Version:</strong> {version} ({version_status})</p>
             <br>
             <button onclick="history.back()">Back to Form</button>
+            <div style="font-size: 0.75rem; color: #666">
+                Function running on App: {app_name} in {region}
+            </div>
         </body>
         </html>
         """
@@ -71,23 +78,25 @@ def check_response(req: func.HttpRequest) -> func.HttpResponse:
 @app.route(route="show_survey", auth_level=func.AuthLevel.ANONYMOUS)
 def show_survey(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
-
+    app_name = os.environ.get('WEBSITE_SITE_NAME', 'Local Environment')
+    region = os.environ.get('REGION_NAME', 'N/A')
     try:
         # Define the HTML form with CSS for better layout
-        html_content = """
+        html_content = f"""
         <!DOCTYPE html>
         <html>
         <head>
             <title>Survey Form</title>
             <style>
-                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; padding: 20px; max-width: 500px; margin: auto; }
-                .form-group { margin-bottom: 15px; }
-                label { font-weight: bold; display: block; margin-bottom: 5px; }
-                input[type="text"] { width: 100%; padding: 8px; box-sizing: border-box; }
-                .radio-group, .checkbox-group { display: flex; flex-direction: column; gap: 5px; }
-                .inline-label { font-weight: normal; display: inline; margin-left: 5px; }
-                button { background-color: #0078d4; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; }
-                button:hover { background-color: #005a9e; }
+                body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; padding: 20px; max-width: 500px; margin: auto; }}
+                .form-group {{ margin-bottom: 15px; }}
+                label {{ font-weight: bold; display: block; margin-bottom: 5px; }}
+                input[type="text"] {{ width: 100%; padding: 8px; box-sizing: border-box; }}
+                .radio-group, .checkbox-group {{ display: flex; flex-direction: column; gap: 5px; }}
+                .inline-label {{ font-weight: normal; display: inline; margin-left: 5px; }}
+                button {{ background-color: #0078d4; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; }}
+                button:hover {{ background-color: #005a9e; }}
+                .footer-text {{ font-size: 0.75rem; color: #666 }}
             </style>
         </head>
         <body>
@@ -122,6 +131,9 @@ def show_survey(req: func.HttpRequest) -> func.HttpResponse:
 
                 <button type="submit">Submit Survey</button>
             </form>
+            <div class="footer-text">
+                Function running on App: {app_name} in {region}
+            </div>
         </body>
         </html>
         """
